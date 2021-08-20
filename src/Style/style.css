@@ -8,3 +8,7 @@
     background-color: white !important;
     border: 1px solid;
 }
+
+iframe{
+    overflow-y: hidden;
+}

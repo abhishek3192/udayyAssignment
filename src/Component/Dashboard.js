@@ -5,6 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Grid, Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "20ch",
+      width: "80ch",
     },
   },
   sectionDesktop: {
@@ -82,21 +83,43 @@ export default function PrimarySearchAppBar() {
   const [firstScreen, setFirstScreen] = useState("");
   const [secondScreen, setSecondScreen] = useState("");
   const [loader, setLoader] = useState(false);
-
+  const [error, setError] = useState("");
   useEffect(() => {
-    const loggedInUser = localStorage.getItem('user')
+    const loggedInUser = localStorage.getItem("user");
     console.log(loggedInUser);
-    if(loggedInUser){
-        history.push('/dashboard')
-    }
-    else{
-        history.push('/')
+    if (loggedInUser) {
+      history.push("/dashboard");
+    } else {
+      history.push("/");
     }
   }, []);
 
   const logoutButton = () => {
     localStorage.clear();
     history.push("/");
+  };
+
+  const handleFirstScreen = (e) => {
+    const urlRegex =
+      /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+    if (!urlRegex.test(e.target.value)) {
+      setError("Invalid Url");
+      setFirstScreen('')
+      return;
+    } else {
+      setFirstScreen(e.target.value);
+    }
+  };
+
+  const handleSecondScreen = (e) => {
+    const urlRegex =
+      /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+    if (!urlRegex.test(e.target.value)) {
+      setError("Invalid Url");
+      return;
+    } else {
+      setSecondScreen(e.target.value);
+    }
   };
 
   return (
@@ -117,7 +140,8 @@ export default function PrimarySearchAppBar() {
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
-              onChange={(event) => setFirstScreen(event.target.value)}
+              onChange={handleFirstScreen}
+              error={error}
             />
           </div>
           <div className={classes.search}>
@@ -131,7 +155,7 @@ export default function PrimarySearchAppBar() {
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
-              onChange={(event) => setSecondScreen(event.target.value)}
+              onChange={handleSecondScreen}
             />
           </div>
           <div className={classes.grow} />
@@ -141,14 +165,12 @@ export default function PrimarySearchAppBar() {
             </Button>
           </div>
           <div className={classes.sectionMobile}>
-            <Button color="inherit" onClick={logoutButton}>
-              Logout
-            </Button>
+            <ExitToAppIcon onClick={logoutButton} />
           </div>
         </Toolbar>
       </AppBar>
       <Grid container style={{ minHeight: "100vh" }}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={6} style={{ borderRight: "1px solid grey" }}>
           <iframe
             width="100%"
             height="100%"
@@ -156,18 +178,18 @@ export default function PrimarySearchAppBar() {
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen="false"
-            className="video__iframe"
+            title='screenone'
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-        <iframe
+          <iframe
             width="100%"
             height="100%"
             src={secondScreen}
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen="false"
-            className="video__iframe"
+            title='screenone'
           />
         </Grid>
       </Grid>
