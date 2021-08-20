@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import kid from "../Assests/image.jpg";
 import Logo from "../Assests/Logo.png";
 import "../Style/style.css";
 import { useHistory } from "react-router-dom";
 import { AccountCircle, LockRounded } from "@material-ui/icons";
-
 import { Grid, TextField, Button, InputAdornment } from "@material-ui/core";
 
+const useStyles = makeStyles((theme) => ({
+  bannerImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+  mainDiv: {
+    display: "flex",
+    flexDirection: "column",
+    maxWidth: 400,
+    minWidth: 300,
+  },
+}));
+
 function Login() {
-  let history = useHistory();
+  const history = useHistory();
+  const classes = useStyles();
   const [userName, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
-    console.log(loggedInUser);
     if (loggedInUser) {
       history.push("/dashboard");
     } else {
@@ -36,11 +50,7 @@ function Login() {
     <>
       <Grid container style={{ minHeight: "100vh" }}>
         <Grid item xs={12} sm={6}>
-          <img
-            src={kid}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            alt="banner"
-          />
+          <img className={classes.bannerImage} src={kid} alt="banner" />
         </Grid>
         <Grid
           container
@@ -53,25 +63,18 @@ function Login() {
           style={{ padding: 10 }}
         >
           <div />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              maxWidth: 400,
-              minWidth: 300,
-            }}
-          >
+          <div className={classes.mainDiv}>
             <Grid container justifyContent="center">
               <img src={Logo} width={150} height={150} alt="logo" />
             </Grid>
             <TextField
-            required
+              required
               type="text"
               label="Username"
               margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment>
+                  <InputAdornment position='start'>
                     <AccountCircle />
                   </InputAdornment>
                 ),
@@ -86,7 +89,7 @@ function Login() {
               margin="normal"
               InputProps={{
                 startAdornment: (
-                  <InputAdornment>
+                  <InputAdornment position='start'>
                     <LockRounded />
                   </InputAdornment>
                 ),

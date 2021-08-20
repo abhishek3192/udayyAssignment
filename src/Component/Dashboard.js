@@ -8,6 +8,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { Grid, Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -74,6 +75,12 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
   },
+  root: {
+    display: "flex",
+    "& > * + *": {
+      marginLeft: theme.spacing(2),
+    },
+  },
 }));
 
 export default function PrimarySearchAppBar() {
@@ -82,8 +89,10 @@ export default function PrimarySearchAppBar() {
   const [username, SetUserName] = useState(localStorage.getItem("user"));
   const [firstScreen, setFirstScreen] = useState("");
   const [secondScreen, setSecondScreen] = useState("");
-  const [loader, setLoader] = useState(false);
+  const [loaderFirstScreen, setLoaderFirstScreen] = useState(false);
+  const [loaderSecondScreen, setLoaderSecondScreen] = useState(false);
   const [error, setError] = useState("");
+
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
     console.log(loggedInUser);
@@ -104,10 +113,14 @@ export default function PrimarySearchAppBar() {
       /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
     if (!urlRegex.test(e.target.value)) {
       setError("Invalid Url");
-      setFirstScreen('')
+      setFirstScreen("");
       return;
     } else {
-      setFirstScreen(e.target.value);
+      setLoaderFirstScreen(true);
+      setTimeout(() => {
+        setFirstScreen(e.target.value);
+      setLoaderFirstScreen(false);
+      }, 3000)
     }
   };
 
@@ -116,9 +129,15 @@ export default function PrimarySearchAppBar() {
       /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
     if (!urlRegex.test(e.target.value)) {
       setError("Invalid Url");
+      setSecondScreen("")
       return;
     } else {
-      setSecondScreen(e.target.value);
+      setLoaderSecondScreen(true);
+      setTimeout(() => {
+        setSecondScreen(e.target.value);
+        setLoaderSecondScreen(false);
+      }, 3000);
+      
     }
   };
 
@@ -170,37 +189,54 @@ export default function PrimarySearchAppBar() {
         </Toolbar>
       </AppBar>
       <Grid container style={{ minHeight: "100vh" }}>
-        <Grid item xs={12} sm={6} style={{ borderRight: "1px solid grey" }}>
-          <iframe
-            width="100%"
-            height="100%"
-            src={firstScreen}
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen="false"
-            title='screenone'
-          />
+        <Grid item xs={12} sm={6} style={{ border: "0.5px solid grey" }}>
+          {loaderFirstScreen ? (
+            <div className={classes.root}>
+              <CircularProgress
+                size={40}
+                left={-20}
+                top={10}
+                status={"loading"}
+                style={{ marginLeft: "50%", marginTop: "50%" }}
+              />
+            </div>
+          ) : (
+            <iframe
+              width="100%"
+              height="100%"
+              src={firstScreen}
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen="false"
+              title="screenone"
+            />
+          )}
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <iframe
-            width="100%"
-            height="100%"
-            src={secondScreen}
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen="false"
-            title='screenone'
-          />
+        <Grid item xs={12} sm={6} style={{ border: "0.5px solid grey" }}>
+          {loaderSecondScreen ? (
+            <div className={classes.root}>
+              <CircularProgress
+                size={40}
+                left={-20}
+                top={10}
+                status={"loading"}
+                style={{ marginLeft: "50%", marginTop: "50%" }}
+              />
+            </div>
+          ) : (
+            <iframe
+              width="100%"
+              height="100%"
+              src={secondScreen}
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              allowFullScreen="false"
+              title="screenone"
+            />
+          )}
         </Grid>
       </Grid>
     </div>
   );
 }
 
-const Loader = () => {
-  return (
-    <div className="loader">
-      <h2>Loading video...</h2>
-    </div>
-  );
-};
